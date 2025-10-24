@@ -1,0 +1,4 @@
+name: prompt
+channels:
+  - defaults
+prefix: /home/doaa/miniconda3/envs/prompt
