@@ -3,13 +3,12 @@ import torch
 from transformers import DistilBertTokenizer, AutoModelForSequenceClassification
 import numpy as np
 
-# تحميل النموذج والتوكنايزر
 @st.cache_resource
 def load_model_and_tokenizer():
     tokenizer = DistilBertTokenizer.from_pretrained('distilbert-base-uncased')
     model = AutoModelForSequenceClassification.from_pretrained(
         "./saved_model",
-        num_labels=2,
+        num_labels=3,
         id2label={0: 'benign', 1: 'malicious', 2: 'unknown'},
         label2id={'benign': 0, 'malicious': 1, 'unknown': 2}
     )
@@ -36,16 +35,18 @@ def predict(text):
         'probability_malicious': float(probabilities[1])
     }
 
-st.title("تصنيف النصوص: كويس أو مش كويس")
-st.write("أدخلي النص وسيتم تصنيفه إلى 'benign' (كويس) أو 'malicious' (مش كويس)")
+# Streamlit interface
+st.title("Text Classification: Benign or Malicious")
+st.write("Enter text below to classify it as 'benign' or 'malicious'.")
 
-user_input = st.text_area("أدخلي النص هنا:", height=200)
+user_input = st.text_area("Enter your text here:", height=200)
 
-if st.button("صنّف النص"):
+if st.button("Classify Text"):
     if user_input.strip() == "":
-        st.error("من فضلكِ أدخلي نصًا للتصنيف!")
+        st.error("Please enter some text to classify!")
     else:
         result = predict(user_input)
-        st.success(f"**النتيجة:** النص هو **{result['label']}**")
-        st.write(f"**احتمالية benign (كويس):** {result['probability_benign']:.2%}")
-        st.write(f"**احتمالية malicious (مش كويس):** {result['probability_malicious']:.2%}")
+        st.success(f"**Result:** The text is **{result['label']}**")
+        st.write(f"**Probability (benign):** {result['probability_benign']:.2%}")
+        st.write(f"**Probability (malicious):** {result['probability_malicious']:.2%}")
+
